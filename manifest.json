@@ -27,7 +27,7 @@
     }
   ],
 
-  "browser_action": {
+  "page_action": {
     "default_icon": {
       "16": "book-16.png",
       "32": "book-32.png",

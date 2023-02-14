@@ -51,3 +51,6 @@ browser.runtime.onMessage.addListener(msg => {
   }
 });
 
+if (wrappedJSObject.ePub && wrappedJSObject.ePub.Book) {
+  browser.runtime.sendMessage({type: "hasEpubJS", msg: true });
+}
