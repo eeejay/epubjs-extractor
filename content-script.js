@@ -2,7 +2,7 @@ function debug(msg) {
   browser.runtime.sendMessage({type: "debug", msg });
 }
 
-async function pageTask() {
+async function decipherPageTask() {
   let _book = Object.values(window).find(v => {
     try {
       return v && !!v.spine && !!v.opening;
@@ -16,8 +16,12 @@ async function pageTask() {
   for (let i = 0; i < _book.spine.length; i++) {
     let section = _book.spine.get(i);
     await section.load(_book.rendition.manager.request);
-    let html = section.contents.outerHTML;
-    newZip.file(section.url.replace(/^\//, ""), html);
+    let html = section.contents.cloneNode(true);
+    let base = html.querySelector("base");
+    if (base) {
+      base.remove();
+    }
+    newZip.file(section.url.replace(/^\//, ""), html.outerHTML);
   }
   let data = await newZip.generateAsync({type: "uint8array"});
   let { metadata } = _book.package;
@@ -32,7 +36,7 @@ function decipherEpub() {
     }
     exportFunction(processZip, window, { defineAs: "sendZip" });
 
-    wrappedJSObject.eval(`(${pageTask.toString()})()`);
+    wrappedJSObject.eval(`(${decipherPageTask.toString()})()`);
   });
 }
 
